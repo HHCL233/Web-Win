@@ -6,6 +6,7 @@ class BaseUWPButton extends HTMLElement {
     template.innerHTML = `
         <style>
           .uwpbutton {
+            cursor: default;
             vertical-align:middle;
             line-height:15.76px;
             min-height:15.76px;
@@ -21,6 +22,7 @@ class BaseUWPButton extends HTMLElement {
             transition: transform 0.3s ease;
           }
           .uwpbutton:active {
+            cursor: default;
             transition: opacity 0.3s ease;
             transform: scale(0.97);
             filter: blur(0.5px);
@@ -28,6 +30,7 @@ class BaseUWPButton extends HTMLElement {
             background: var(--primary-color, #999999);
           }
           .uwpbutton:hover {
+            cursor: default;
             outline: 2.75px solid  #999999;
             outline-offset: -2.75px;
           }
@@ -293,7 +296,7 @@ class BaseUWPDialog extends HTMLElement {
         
         :host([show]) {
           visibility: visible;
-          background-color: rgba(255, 255, 255, 0.29);
+          background-color: rgba(255, 255, 255, 0.56);
           transition: background-color 0.3s ease;
         }
         
@@ -305,10 +308,10 @@ class BaseUWPDialog extends HTMLElement {
           max-width: 500px;
           box-shadow: 0 0px 12px rgba(0, 0, 0, 0.28);
           overflow: hidden;
-          transform: scale(1.05);
+          transform: scale(1.055);
           opacity: 0;
           transition: 
-            transform 0.3s cubic-bezier(0.25, 0.10, 0.25, 1),
+            transform 0.3s cubic-bezier(0.25, 0.10, 0.25, 0.85),
             opacity 0.3s ease;
         }
         
@@ -319,7 +322,7 @@ class BaseUWPDialog extends HTMLElement {
         
         /* 关闭时的动画 - 通过JS动态添加类 */
         .dialog-container.closing {
-          transform: scale(1.05);
+          transform: scale(1.055);
           opacity: 0;
         }
         
@@ -330,10 +333,10 @@ class BaseUWPDialog extends HTMLElement {
           
           box-shadow: 0 0px 12px rgba(0, 0, 0, 0.28);
           overflow: hidden;
-          transform: scale(1.05);
+          transform: scale(1.055);
           opacity: 0;
           transition: 
-            transform 0.3s cubic-bezier(0.25, 0.10, 0.25, 1),
+            transform 0.3s cubic-bezier(0.25, 0.10, 0.25, 0.85),
             opacity 0.3s ease;
         }
         
@@ -368,6 +371,7 @@ class BaseUWPDialog extends HTMLElement {
         }
         
         .uwpbutton {
+          cursor: default;
           min-width: 200px;
           line-height: 15.76px;
           min-height: 15.76px;
@@ -384,6 +388,7 @@ class BaseUWPDialog extends HTMLElement {
         }
         
         .uwpbutton:active {
+          cursor: default;
           transition: opacity 0.3s ease;
           transform: scale(0.97);
           filter: blur(0.5px);
@@ -392,11 +397,13 @@ class BaseUWPDialog extends HTMLElement {
         }
         
         .uwpbutton:hover {
+          cursor: default;
           outline: 2.75px solid #999999;
           outline-offset: -2.75px;
         }
         
         .uwpbutton:disabled {
+          cursor: default;
           transition: opacity 0s ease;
           transform: scale(1);
           filter: blur(0);
