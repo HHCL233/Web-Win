@@ -6,6 +6,7 @@ class BaseUWPButton extends HTMLElement {
     template.innerHTML = `
         <style>
           .uwpbutton {
+            vertical-align:middle;
             line-height:16px;
             min-height:16px;
             padding: 10px 20px;
@@ -27,8 +28,8 @@ class BaseUWPButton extends HTMLElement {
             background: var(--primary-color, #999999);
           }
           .uwpbutton:hover {
-            outline: 2.5px solid  #999999;
-            outline-offset: -2.5px;
+            outline: 2.75px solid  #999999;
+            outline-offset: -2.75px;
           }
           
           .uwpbutton:disabled {
@@ -57,6 +58,55 @@ class BaseUWPButton extends HTMLElement {
   }
 }
 
+class BaseUWPPasswordBox extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    const template = document.createElement("template");
+    template.innerHTML = `
+        <style>
+          .uwppasswordbox {
+            vertical-align:middle;
+            display:inline-block;
+            min-width:300px;
+            outline: 2.75px solid  #999999;
+            outline-offset: -2.75px;
+            line-height:15px;
+            min-height:15px;
+            padding: 9px 10px;
+            background: var(--primary-color,rgb(255, 255, 255));
+            color:rgb(0, 0, 0);
+            border: none;
+            font-size: 16px;
+          }
+          .uwppasswordbox:focus {
+            outline: 2.75px solid  #0078D4;
+            outline-offset: -2.75px;
+          }
+          
+          .uwppasswordbox:disabled {
+            background-color:#CCCCCC;
+            outline: 2.75px solid  #CCCCCC;
+            cursor: not-allowed;
+            color:#7A7A7A
+          }
+        </style>
+        <input type="password" name="fname" class="uwppasswordbox" value="">
+
+      `;
+    this.shadowRoot.appendChild(template.content.cloneNode(true));
+    this._input = this.shadowRoot.querySelector(".uwpappbutton");
+  }
+  static get observedAttributes() {
+    return ["disabled"]; // 添加value属性监听
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === "disabled") {
+      this._input.disabled = newValue !== null;
+    }
+  }
+}
 class BaseUWPAppBarButton extends HTMLElement {
   constructor() {
     super();
@@ -65,26 +115,27 @@ class BaseUWPAppBarButton extends HTMLElement {
     template.innerHTML = `
         <style>
           .uwpappbutton {
+            vertical-align:middle;
             display:inline-block;
             min-width:300px;
-            outline: 2.5px solid  #999999;
-            outline-offset: -2.5px;
+            outline: 2.75px solid  #999999;
+            outline-offset: -2.75px;
             line-height:15px;
             min-height:15px;
-            padding: 9.1px 10px;
+            padding: 9px 10px;
             background: var(--primary-color,rgb(255, 255, 255));
             color:rgb(0, 0, 0);
             border: none;
             font-size: 16px;
           }
           .uwpappbutton:focus {
-            outline: 2.5px solid  #0078D4;
-            outline-offset: -2.5px;
+            outline: 2.75px solid  #0078D4;
+            outline-offset: -2.75px;
           }
           
           .uwpappbutton:disabled {
             background-color:#CCCCCC;
-            outline: 2.5px solid  #CCCCCC;
+            outline: 2.75px solid  #CCCCCC;
             cursor: not-allowed;
             color:#7A7A7A
           }
@@ -135,11 +186,12 @@ class BaseUWPAppBarButton extends HTMLElement {
     this.setAttribute("value", val);
   }
 }
-
 class UWPButton extends BaseUWPButton {}
 
 class UWPAPPBarButton extends BaseUWPAppBarButton {}
 
+class UWPPasswordBox extends BaseUWPPasswordBox {}
+
 customElements.define("win-button", UWPButton);
 customElements.define("win-barbutton", UWPAPPBarButton);
- 
+customElements.define("win-passwordbox", UWPPasswordBox);
