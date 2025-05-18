@@ -7,8 +7,8 @@ class BaseUWPButton extends HTMLElement {
         <style>
           .uwpbutton {
             vertical-align:middle;
-            line-height:16px;
-            min-height:16px;
+            line-height:15.76px;
+            min-height:15.76px;
             padding: 10px 20px;
             background: var(--primary-color, #CCCCCC);
             color:rgb(0, 0, 0);
@@ -186,12 +186,94 @@ class BaseUWPAppBarButton extends HTMLElement {
     this.setAttribute("value", val);
   }
 }
+class BaseUWPRichEditBox extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    const template = document.createElement("template");
+    template.innerHTML = `
+        <style>
+          .uwprichrditbox {
+            resize: none;
+            vertical-align:middle;
+            display:inline-block;
+            min-width:300px;
+            outline: 2.75px solid  #999999;
+            outline-offset: -2.75px;
+            line-height:25.76px;
+            min-height:25.76px;
+            padding: 5px 10px;
+            background: var(--primary-color,rgb(255, 255, 255));
+            color:rgb(0, 0, 0);
+            border: none;
+            font-size: 16px;
+          }
+          .uwprichrditbox:focus {
+            outline: 2.75px solid  #0078D4;
+            outline-offset: -2.75px;
+          }
+          
+          .uwprichrditbox:disabled {
+            background-color:#CCCCCC;
+            outline: 2.75px solid  #CCCCCC;
+            cursor: not-allowed;
+            color:#7A7A7A
+          }
+        </style>
+        <div class="uwprichrditbox" contenteditable="true"><br /></div>  
+      `;
+    this.shadowRoot.appendChild(template.content.cloneNode(true));
+    this._input = this.shadowRoot.querySelector(".uwprichrditbox");
+  }
+  connectedCallback() {
+    // 获取组件标签内的文本内容
+    const textContent = this.textContent.trim();
+    console.log(textContent);
+
+    // 优先使用属性值，如果没有属性值则使用标签内容
+    const value = this.getAttribute("value") || textContent;
+
+    // 设置input的value属性
+    if (value) {
+      this._input.value = value;
+    }
+
+    // 清空组件标签内的文本内容（可选）
+    this.textContent = "";
+  }
+
+  static get observedAttributes() {
+    return ["disabled", "value"]; // 添加value属性监听
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === "disabled") {
+      this._input.disabled = newValue !== null;
+    } else if (name === "value") {
+      // 当value属性变化时更新输入框
+      this._input.value = newValue || "";
+    }
+  }
+
+  // 添加getter和setter以便通过JavaScript属性访问
+  get value() {
+    return this._input.value;
+  }
+
+  set value(val) {
+    this._input.value = val;
+    this.setAttribute("value", val);
+  }
+}
 class UWPButton extends BaseUWPButton {}
 
 class UWPAPPBarButton extends BaseUWPAppBarButton {}
 
 class UWPPasswordBox extends BaseUWPPasswordBox {}
 
+class UWPRichEditBox extends BaseUWPRichEditBox {}
+
 customElements.define("win-button", UWPButton);
 customElements.define("win-barbutton", UWPAPPBarButton);
 customElements.define("win-passwordbox", UWPPasswordBox);
+customElements.define("win-richrditbox", UWPRichEditBox);
