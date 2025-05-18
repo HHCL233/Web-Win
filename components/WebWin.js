@@ -194,6 +194,7 @@ class BaseUWPRichEditBox extends HTMLElement {
     template.innerHTML = `
         <style>
           .uwprichrditbox {
+            contenteditable="true";
             resize: none;
             vertical-align:middle;
             display:inline-block;
@@ -220,7 +221,7 @@ class BaseUWPRichEditBox extends HTMLElement {
             color:#7A7A7A
           }
         </style>
-        <div class="uwprichrditbox" contenteditable="true"><br /></div>  
+        <div class="uwprichrditbox" contenteditable="true"><br></div>  
       `;
     this.shadowRoot.appendChild(template.content.cloneNode(true));
     this._input = this.shadowRoot.querySelector(".uwprichrditbox");
@@ -265,6 +266,7 @@ class BaseUWPRichEditBox extends HTMLElement {
     this.setAttribute("value", val);
   }
 }
+
 class UWPButton extends BaseUWPButton {}
 
 class UWPAPPBarButton extends BaseUWPAppBarButton {}
@@ -273,7 +275,10 @@ class UWPPasswordBox extends BaseUWPPasswordBox {}
 
 class UWPRichEditBox extends BaseUWPRichEditBox {}
 
+
+
 customElements.define("win-button", UWPButton);
 customElements.define("win-barbutton", UWPAPPBarButton);
 customElements.define("win-passwordbox", UWPPasswordBox);
 customElements.define("win-richrditbox", UWPRichEditBox);
+
