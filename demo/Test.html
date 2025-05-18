@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>WebWin组件示例</title>
-    <script src="WebWin.js"></script>
+    <script src="../components/WebWin.js"></script>
     <style></style>
   </head>
   <body>
@@ -14,10 +14,38 @@
     <win-passwordbox></win-passwordbox>
     <win-richrditbox>今天来给大家想看的东西</win-richrditbox>
     <win-toggleswitch></win-toggleswitch>
-
+    <win-dialog id="myDialog" title="提示">
+      <p>这是一个UWP风格的弹窗示例。</p>
+    </win-dialog>
     <script>
       function showAlert() {
-        alert("啊~啊~");
+        const dialog = document.getElementById("myDialog");
+
+        // 设置内容
+        dialog.content = "<p>你好，弹窗！</p>";
+
+        // 设置按钮
+        dialog.buttons = [
+          { text: "没错", index: 0, closeOnClick: true },
+          { text: "还是算了吧", index: 1, closeOnClick: false },
+        ];
+
+        // 监听按钮点击事件
+        dialog.addEventListener("buttonclick", (e) => {
+          console.log("按钮被点击:", e.detail);
+        });
+
+        // 显示弹窗
+        dialog.show();
+      }
+      // 下面是窗口
+      function showAlert1() {
+        const dialog = document.getElementById("myDialog1");
+        dialog.buttons = [
+          { text: "确定", closeOnClick: true },
+          { text: "取消", closeOnClick: true },
+        ];
+        dialog.show();
       }
     </script>
   </body>
