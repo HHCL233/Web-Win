@@ -8,13 +8,14 @@
   </head>
   <body>
     <win-button onclick="showAlert()">Content</win-button>
+    <win-button onclick="showAlert1()">Content1</win-button>
     <win-button disabled>禁用</win-button>
     <win-barbutton value="大家好我是"></win-barbutton>
     <win-barbutton disabled value="说的道理~">Content</win-barbutton>
     <win-passwordbox></win-passwordbox>
     <win-richrditbox>今天来给大家想看的东西</win-richrditbox>
     <win-toggleswitch></win-toggleswitch>
-    <win-dialog id="myDialog" title="提示">
+    <win-dialog id="myDialog" title="你好!">
       <p>这是一个UWP风格的弹窗示例。</p>
     </win-dialog>
     <script>
@@ -45,13 +46,64 @@
       }
       // 下面是窗口
       function showAlert1() {
-        const dialog = document.getElementById("myDialog1");
-        dialog.buttons = [
-          { text: "确定", closeOnClick: true },
-          { text: "取消", closeOnClick: true },
-        ];
-        dialog.show();
+        const buttonGroup = document.createElement(
+          "win-dropdown"
+        );
+        buttonGroup.setAttribute("selectable", ""); // 设置为可选模式
+
+        // 添加按钮
+        buttonGroup.addButton("小", "small");
+        buttonGroup.addButton("中", "medium", true); // 默认选中
+        buttonGroup.addButton("大", "large");
+
+        // 添加到DOM
+        document.body.appendChild(buttonGroup);
+
+        // 监听按钮点击事件
+        buttonGroup.addEventListener("button-click", (e) => {
+          console.log("点击的按钮:", e.detail.text);
+          console.log("值:", e.detail.value);
+
+          // 根据值执行不同操作
+          switch (e.detail.value) {
+            case "small":
+              // 小尺寸逻辑
+              break;
+            case "medium":
+              // 中尺寸逻辑
+              break;
+            case "large":
+              // 大尺寸逻辑
+              break;
+          }
+        });
+
+        // 获取当前选中的值
+        console.log("当前选中:", buttonGroup.selectedValue);
       }
+    </script>
+    <win-list id="myList">
+
+    </win-list>
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const list = document.getElementById('myList');
+        
+        // 监听选择变化事件
+        list.addEventListener('win-list', (e) => {
+          console.log('选中项:', e.detail.selectedValue, 
+                    '索引:', e.detail.selectedIndex);
+        });
+        
+        // 动态添加按钮示例
+        setTimeout(() => {
+          list.addButton('动态选项');
+          
+          // 批量设置按钮示例，第二个参数是选中的索引
+          list.setButtons(['Windows', 'Office', 'Azure', 'Xbox'], 1);
+        }, 0);
+      });
     </script>
   </body>
 </html>
