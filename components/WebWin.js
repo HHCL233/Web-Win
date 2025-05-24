@@ -76,6 +76,7 @@ class BaseUWPSelectableList extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this._selected = false;
+        this._updating = false;
         
         this.shadowRoot.innerHTML = `
           <style>
@@ -111,7 +112,7 @@ class BaseUWPSelectableList extends HTMLElement {
             
             .uwpbutton:hover:not(.selected) {
               cursor: default;
-              background: var(--primary-color, #DADADA);
+              background: var(--primary-color, #DADADA) !important ;
             }
             
             .uwpbutton.selected:hover {
@@ -124,12 +125,8 @@ class BaseUWPSelectableList extends HTMLElement {
               background: #cccccc;
               cursor: not-allowed;
             }
-            ::slotted(uwp-button) {
-              display: block; /* 每个按钮单独一行 */
-              width: 100%;   /* 可选：让按钮宽度填满容器 */
-            }
           </style>
-        <button class="uwpbutton"><slot></slot></button>
+          <button class="uwpbutton"><slot></slot></button>
         `;
         
         this.button = this.shadowRoot.querySelector('.uwpbutton');
@@ -143,7 +140,7 @@ class BaseUWPSelectableList extends HTMLElement {
               composed: true,
               detail: {
                 value: this.textContent,
-                selected: !this.selected
+                selected: true // 总是设置为true，因为不能取消选中
               }
             }));
           }
@@ -151,18 +148,41 @@ class BaseUWPSelectableList extends HTMLElement {
       }
       
       set selected(value) {
-        this._selected = value;
-        this.button.classList.toggle('selected', value);
-        if (value) {
-          this.setAttribute('selected', '');
-        } else {
-          this.removeAttribute('selected');
+        if (this._updating) return; // 防止递归
+        this._updating = true;
+        
+        const newValue = Boolean(value);
+        if (this._selected !== newValue) {
+          this._selected = newValue;
+          this.button.classList.toggle('selected', newValue);
+          
+          // 只在值变化时更新属性
+          if (newValue) {
+            this.setAttribute('selected', '');
+          } else {
+            this.removeAttribute('selected');
+          }
         }
+        
+        this._updating = false;
       }
       
       get selected() {
         return this._selected;
       }
+      
+      attributeChangedCallback(name, oldValue, newValue) {
+        if (this._updating) return;
+        
+        if (name === 'selected') {
+          // 只更新内部状态，不触发setter的循环
+          this._selected = newValue !== null;
+          this.button.classList.toggle('selected', this._selected);
+        } else if (name === 'disabled') {
+          this.button.disabled = newValue !== null;
+        }
+      }
+      
       
       set disabled(value) {
         if (value) {
@@ -176,13 +196,6 @@ class BaseUWPSelectableList extends HTMLElement {
         return this.hasAttribute('disabled');
       }
       
-      attributeChangedCallback(name, oldValue, newValue) {
-        if (name === 'disabled') {
-          this.button.disabled = newValue !== null;
-        } else if (name === 'selected') {
-          this.selected = newValue !== null;
-        }
-      }
     }
     
     // 注册内部按钮组件
@@ -194,16 +207,13 @@ class BaseUWPSelectableList extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         :host {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-          margin: 10px 0;  /* 调整上下边距 */
+          display: block;
         }
+        
         ::slotted(uwp-button) {
-          display: block; /* 每个按钮单独一行 */
-          margin: -4px 0;  /* 调整上下边距 */
-          width: 100%;   /* 可选：让按钮宽度填满容器 */
-          z-index: 1;
+          display: block;
+          width: 100%;
+          margin: 0px 0;
         }
       </style>
       <slot></slot>
@@ -212,10 +222,21 @@ class BaseUWPSelectableList extends HTMLElement {
   
   connectedCallback() {
     this.addEventListener('uwp-select', this.handleSelect.bind(this));
+    // 确保至少有一个选项被选中
+    this._ensureSelection();
+  }
+  
+  // 确保至少有一个选项被选中
+  _ensureSelection() {
+    if (!this.querySelector('uwp-button[selected]') && this.children.length > 0) {
+      this.children[0].selected = true;
+    }
   }
   
   // 处理选择事件
   handleSelect(e) {
+    if (e.target.selected) return;
+    
     // 取消所有其他按钮的选中状态
     this.querySelectorAll('uwp-button').forEach(button => {
       if (button !== e.target) {
@@ -223,17 +244,17 @@ class BaseUWPSelectableList extends HTMLElement {
       }
     });
     
-    // 设置当前按钮的选中状态
-    const isSelected = e.detail.selected;
-    e.target.selected = isSelected;
+    // 直接设置内部状态避免递归
+    e.target._selected = true;
+    e.target.button.classList.add('selected');
+    e.target.setAttribute('selected', '');
     
     // 触发选择变化事件
     this.dispatchEvent(new CustomEvent('uwp-selection-changed', {
       detail: {
-        selectedValue: isSelected ? e.detail.value : null,
-        selectedIndex: isSelected ? 
-          Array.from(this.children).indexOf(e.target) : -1,
-        selectedElement: isSelected ? e.target : null
+        selectedValue: e.detail.value,
+        selectedIndex: Array.from(this.children).indexOf(e.target),
+        selectedElement: e.target
       }
     }));
   }
@@ -243,22 +264,27 @@ class BaseUWPSelectableList extends HTMLElement {
     const button = document.createElement('uwp-button');
     button.textContent = text;
     if (selected) {
-      button.selected = true;
       // 取消其他按钮的选中状态
       this.querySelectorAll('uwp-button').forEach(btn => {
         btn.selected = false;
       });
+      button.selected = true;
+    } else if (this.querySelectorAll('uwp-button[selected]').length === 0) {
+      // 如果没有选中的按钮，则选中新添加的按钮
+      button.selected = true;
     }
     this.appendChild(button);
     return button;
   }
   
   // 批量设置按钮
-  setButtons(buttonTexts, selectedIndex = -1) {
+  setButtons(buttonTexts, selectedIndex = 0) { // 默认选中第一个
     this.innerHTML = '';
     buttonTexts.forEach((text, index) => {
       this.addButton(text, index === selectedIndex);
     });
+    // 确保至少有一个选项被选中
+    this._ensureSelection();
   }
   
   // 获取当前选中的值

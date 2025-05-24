@@ -10,10 +10,10 @@
     <win-button onclick="showAlert()">Content</win-button>
     <win-button onclick="showAlert1()">Content1</win-button>
     <win-button disabled>禁用</win-button>
-    <win-barbutton value="大家好我是"></win-barbutton>
-    <win-barbutton disabled value="说的道理~">Content</win-barbutton>
+    <win-barbutton value="弹窗无法让高度正确但是我不会修"></win-barbutton>
+    <win-barbutton disabled value="反正在90%缩放下也能用">Content</win-barbutton>
     <win-passwordbox></win-passwordbox>
-    <win-richrditbox>今天来给大家想看的东西</win-richrditbox>
+    <win-richrditbox>!!!</win-richrditbox>
     <win-toggleswitch></win-toggleswitch>
     <win-dialog id="myDialog" title="你好!">
       <p>这是一个UWP风格的弹窗示例。</p>
@@ -98,10 +98,9 @@
         
         // 动态添加按钮示例
         setTimeout(() => {
-          list.addButton('动态选项');
           
           // 批量设置按钮示例，第二个参数是选中的索引
-          list.setButtons(['Windows', 'Office', 'Azure', 'Xbox'], 1);
+          list.setButtons(['虽然这些控件', 'BUG很多', "但是", "不想修了","反正也能用","还有","一个弹窗但是没法展示"], 4);
         }, 0);
       });
     </script>

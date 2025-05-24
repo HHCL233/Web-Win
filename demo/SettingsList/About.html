@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+  <head>
+    <meta charset="utf-8" />
+    <title>关于</title>
+    <script src="../../components/WebWin.js"></script>
+  </head>
+  <body style="height: 100%; width: 100%">
+    <h2 style="font-weight: normal; margin-top: 20px; margin-bottom: 10px" id="d">
+      电脑
+    </h2>
+    <table style="font-size: 16px; border-spacing: 0px 8px">
+      <tr>
+        <td style="width: 200px">版本</td>
+        <td id="os">Windows 10 专业版</td>
+      </tr>
+      <tr>
+        <td style="width: 200px">产品 ID</td>
+        <td>00330-80000-00000-AA227</td>
+      </tr>
+      <tr>
+        <td style="width: 200px">处理器</td>
+        <td>13th Gen Intel(R) Core(TM) i5-13600KF 3.50 Ghz</td>
+      </tr>
+      <tr>
+        <td style="width: 200px">已安装的内存</td>
+        <td>32.0 GB</td>
+      </tr>
+      <tr>
+        <td style="width: 200px">系统类型</td>
+        <td>64 位操作系统，基于 x64 的处理器</td>
+      </tr>
+      <tr>
+        <td style="width: 200px">笔和触控</td>
+        <td>没有可用于此显示器的笔或触控输入</td>
+      </tr>
+    </table>
+    <a
+      style="
+        text-decoration: none;
+        color: #057ad3;
+        font-size: 15px;
+        display: block;
+        margin-top: 2.5px;
+      "
+      id = "s1"
+      href="https://www.Microsoft.com/"
+      >更改产品密钥或升级你的 Windows 版本</a
+    >
+    <a
+      style="
+        text-decoration: none;
+        color: #057ad3;
+        font-size: 15px;
+        margin-top: 25px;
+        display: block;
+      "
+      id = "s2"
+      href="https://www.Microsoft.com/"
+      >阅读 Windows 和 Microsoft 服务的隐私声明</a
+    >
+    <a
+      style="
+        text-decoration: none;
+        color: #057ad3;
+        font-size: 15px;
+        margin-top: 25px;
+        display: block;
+      "
+      id = "s3"
+      href="https://www.Microsoft.com/"
+      >阅读适用于我们服务的 Microsoft 服务协议</a
+    >
+    <a
+      style="
+        text-decoration: none;
+        color: #057ad3;
+        font-size: 15px;
+        margin-top: 25px;
+        display: block;
+      "
+      id = "s4"
+      href="https://www.Microsoft.com/"
+      >阅读 Microsoft 软件许可条款</a
+    >
+    <script>
+      var obj = document.getElementById("os");
+      var obj1 = document.getElementById("s1");
+      var obj2 = document.getElementById("s2");
+      var obj3 = document.getElementById("s3");
+      var obj4 = document.getElementById("s4");
+      var obj5 = document.getElementById("d");
+      function getUserOsInfo() {
+        const userAgent = navigator.userAgent;
+        if (userAgent.indexOf("Windows NT 10.0") !== -1) return ["Windows 10 专业版","电脑","Windows","Microsoft"];
+        if (userAgent.indexOf("Windows NT 6.2") !== -1) return ["Windows 8 专业版","电脑","Windows","Microsoft"];
+        if (userAgent.indexOf("Windows NT 6.1") !== -1) return ["Windows 7 旗舰版","电脑","Windows","Microsoft"];
+        if (userAgent.indexOf("Windows NT 6.0") !== -1) return ["Windows Vista Ultimate","电脑","Windows","Microsoft"];
+        if (userAgent.indexOf("Windows NT 5.1") !== -1) return ["Windows XP Professional","电脑","Windows","Microsoft"];
+        if (userAgent.indexOf("Windows NT 5.0") !== -1) return ["Windows 2000 Datacenter Server","电脑","Windows","Microsoft"];
+        if (userAgent.indexOf("Mac") !== -1) return ["macOS/iOS","设备","macOS/iOS","Apple"];
+        if (userAgent.indexOf("X11") !== -1) return ["UNIX","电脑","UNIX","对应发行版"];
+        if (userAgent.indexOf("Linux") !== -1) return ["Linux/Android","设备","Linux","GNU"];
+        return "未知";
+      }
+      
+
+      obj.innerText= getUserOsInfo()[0]; 
+      obj1.innerText= "更改产品密钥或升级你的 "+getUserOsInfo()[2] +" 版本" ;
+      obj2.innerText= "阅读 "+ getUserOsInfo()[2] +" 和 " + getUserOsInfo()[3] + " 服务的隐私声明";
+      obj3.innerText= "阅读适用于我们服务的 " + getUserOsInfo()[3] + " 服务协议";
+      obj4.innerText= "阅读 " + getUserOsInfo()[3] + " 软件许可协议";
+      obj5.innerText= getUserOsInfo()[1]; 
+    </script>
+  </body>
+</html>

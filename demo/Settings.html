@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+  <head>
+    <meta charset="utf-8" />
+    <title>WebWin组件示例</title>
+    <script src="../components/WebWin.js"></script>
+  </head>
+  <body marginheight="0px" marginwidth="0px" style="height: 100%">
+    <div
+      style="
+        width: 300px;
+        height: 100%;
+        background-color: #f2f2f2;
+        display: inline-block;
+      "
+    >
+      <win-list id="myList">
+        <uwp-button onclick="loadUrlInIframe('item','about:blank')" selected
+          >主页</uwp-button
+        >
+        <uwp-button>没用</uwp-button>
+        <uwp-button>没用</uwp-button>
+        <uwp-button>没用</uwp-button>
+        <uwp-button
+          onclick="loadUrlInIframe('item','SettingsList/About.html')"
+          >关于</uwp-button
+        >
+      </win-list>
+    </div>
+    <div
+      style="
+        height: 99%;
+        width: calc(100% - 310px);
+        vertical-align: top;
+        display: inline-block;
+      "
+    >
+      <iframe
+        src=""
+        frameborder="0"
+        scrolling="no"
+        style="border: none; height: 100%; width: 100%; overflow-x: hidden"
+        id="item"
+      ></iframe>
+    </div>
+    <script>
+      
+      function showAlert1() {
+        const buttonGroup = document.createElement("win-dropdown");
+        buttonGroup.setAttribute("selectable", ""); // 设置为可选模式
+
+        // 添加按钮
+        buttonGroup.addButton("小", "small");
+        buttonGroup.addButton("中", "medium", true); // 默认选中
+        buttonGroup.addButton("大", "large");
+
+        // 添加到DOM
+        document.body.appendChild(buttonGroup);
+
+        // 监听按钮点击事件
+        buttonGroup.addEventListener("button-click", (e) => {
+          console.log("点击的按钮:", e.detail.text);
+          console.log("值:", e.detail.value);
+
+          // 根据值执行不同操作
+          switch (e.detail.value) {
+            case "small":
+              // 小尺寸逻辑
+              break;
+            case "medium":
+              // 中尺寸逻辑
+              break;
+            case "large":
+              // 大尺寸逻辑
+              break;
+          }
+        });
+
+        // 获取当前选中的值
+        console.log("当前选中:", buttonGroup.selectedValue);
+      }
+    </script>
+    <script>
+      function loadUrlInIframe(iframe, url) {
+        // 获取 iframe 元素
+        let iframeElement;
+
+        if (typeof iframe === "string") {
+          // 如果是字符串，则当作 ID 处理
+          iframeElement = document.getElementById(iframe);
+          if (!iframeElement) {
+            throw new Error(`找不到 ID 为 "${iframe}" 的 iframe 元素`);
+          }
+        } else if (
+          iframe instanceof HTMLElement &&
+          iframe.tagName === "IFRAME"
+        ) {
+          // 如果是 iframe 元素
+          iframeElement = iframe;
+        } else {
+          throw new Error(
+            "参数 iframe 必须是 iframe 元素的 ID 或 iframe 元素本身"
+          );
+        }
+
+        // 检查 URL 是否有效
+        if (typeof url !== "string" || !url.trim()) {
+          throw new Error("URL 必须是有效的非空字符串");
+        }
+
+        // 在 iframe 中加载 URL
+        iframeElement.src = url;
+      }
+    </script>
+    <script>
+      /*
+      document.addEventListener('DOMContentLoaded', () => {
+        const list = document.getElementById('myList');
+        
+        // 监听选择变化事件
+        
+        
+        // 动态添加按钮示例
+        setTimeout(() => {
+          
+          // 批量设置按钮示例，第二个参数是选中的索引
+          
+        }, 0);
+      });
+      list.addEventListener('win-list', (e) => {
+          console.log('选中项:', e.detail.selectedValue, 
+                    '索引:', e.detail.selectedIndex);
+        });
+      */
+    </script>
+  </body>
+</html>
