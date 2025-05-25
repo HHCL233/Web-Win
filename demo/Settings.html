@@ -15,12 +15,12 @@
       "
     >
       <win-list id="myList">
-        <uwp-button onclick="loadUrlInIframe('item','about:blank')" selected
+        <uwp-button onclick="loadUrlInIframe('item','SettingsList/Home.html')" selected
           >主页</uwp-button
         >
-        <uwp-button>没用</uwp-button>
-        <uwp-button>没用</uwp-button>
-        <uwp-button>没用</uwp-button>
+        <uwp-button onclick="loadUrlInIframe('item','SettingsList/Error.html')">没用</uwp-button>
+        <uwp-button onclick="loadUrlInIframe('item','SettingsList/Error.html')">没用</uwp-button>
+        <uwp-button onclick="loadUrlInIframe('item','SettingsList/Error.html')">没用</uwp-button>
         <uwp-button
           onclick="loadUrlInIframe('item','SettingsList/About.html')"
           >关于</uwp-button
@@ -36,7 +36,7 @@
       "
     >
       <iframe
-        src=""
+        src="SettingsList/Home.html"
         frameborder="0"
         scrolling="no"
         style="border: none; height: 100%; width: 100%; overflow-x: hidden"

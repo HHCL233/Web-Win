@@ -1,3 +1,4 @@
+//Tips:AI写的居多，反正能用就行(
 class BaseUWPButton extends HTMLElement {
   constructor() {
     super();
