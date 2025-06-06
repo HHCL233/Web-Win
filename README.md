@@ -7,6 +7,12 @@
 1. 下载WebWin.js并存放在需要使用的HTML文件同一目录
 2. 在需要使用的HTML文件的head部分添加`<script src="webwin.js"></script>`
 
+#### 演示
+1. 使用`git clone https://gitee.com/hhcl233/web-win.git`克隆
+2. 打开 web-win\demo\Settings.html
+
+
+
 #### 已实现内容
 * 各种输入框
 * 按钮
