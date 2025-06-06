@@ -300,7 +300,173 @@ class BaseUWPSelectableList extends HTMLElement {
     return selected ? Array.from(this.children).indexOf(selected) : -1;
   }
 }
+class BaseUWPCheckbox extends HTMLElement {
+  static get observedAttributes() {
+      return ['checked', 'disabled'];
+  }
 
+  constructor() {
+      super();
+      this.attachShadow({ mode: 'open' });
+      this._checked = false;
+      this._disabled = false;
+
+      this.shadowRoot.innerHTML = `
+          <style>
+              :host {
+                  display: inline-flex;
+                  align-items: center;
+                  cursor: pointer;
+                  user-select: none;
+                  --size: 20px;
+                  --border-width: 3px;
+                  --accent-color:rgb(0, 0, 0);
+                  --disabled-color: #E6E6E6;
+                  --disabled-text-color: #A6A6A6;
+              }
+
+              :host([disabled]) {
+                  cursor: default;
+                  pointer-events: none;
+              }
+
+              .checkbox-container {
+                  display: flex;
+                  align-items: center;
+              }
+
+              .check-box {
+                  width: var(--size);
+                  height: var(--size);
+                  border: var(--border-width) solid;
+                  border-radius: var(--border-radius);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  position: relative;
+              }
+
+              :host(:not([disabled])) .check-box {
+                  border-color: var(--accent-color);
+              }
+
+              :host([disabled]) .check-box {
+                  border-color: var(--disabled-color);
+                  background-color: var(--disabled-color);
+              }
+
+              :host([checked]) .check-box {
+                  background-color: #0078D7;
+                  border-color:#0078D7;
+              }
+
+              :host([checked][disabled]) .check-box {
+                  background-color: var(--disabled-color);
+              }
+
+              .checkmark {
+                  width: calc(var(--size) + 2px);
+                  height: calc(var(--size) + 2px);
+                  position: absolute;
+              }
+
+              :host([checked]) .checkmark {
+              }
+
+              .label {
+                  font-size: 14px;
+                  color: #000000;
+                  margin: 6px;
+              }
+
+              :host([disabled]) .label {
+                  color: var(--disabled-text-color);
+              }
+
+              :host(:not([disabled]):hover[checked]) .check-box {
+                  border-color:#000000;
+              }
+
+              :host(:not([disabled]):active) .check-box {
+                  background-color: #666666;
+              }
+          </style>
+          <div class="checkbox-container">
+              <div class="check-box">
+                  <svg class="checkmark" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9.00002 16.17L4.83002 12L3.41002 13.41L9.00002 19L21 7.00003L19.59 5.59003L9.00002 16.17Z" fill="white"/>
+                  </svg>
+              </div>
+              <span class="label"><slot></slot></span>
+          </div>
+      `;
+  }
+
+  connectedCallback() {
+      this.addEventListener('click', this._toggleChecked);
+      this._updateCheckedState();
+      this._updateDisabledState();
+  }
+
+  disconnectedCallback() {
+      this.removeEventListener('click', this._toggleChecked);
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+      if (name === 'checked') {
+          this._checked = newValue !== null;
+          this._updateCheckedState();
+      } else if (name === 'disabled') {
+          this._disabled = newValue !== null;
+          this._updateDisabledState();
+      }
+  }
+
+  _toggleChecked() {
+      if (!this._disabled) {
+          this.checked = !this._checked;
+          this.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+  }
+
+  _updateCheckedState() {
+      if (this._checked) {
+          this.setAttribute('checked', '');
+      } else {
+          this.removeAttribute('checked');
+      }
+  }
+
+  _updateDisabledState() {
+      if (this._disabled) {
+          this.setAttribute('disabled', '');
+      } else {
+          this.removeAttribute('disabled');
+      }
+  }
+
+  get checked() {
+      return this._checked;
+  }
+
+  set checked(value) {
+      if (this._checked !== value) {
+          this._checked = value;
+          this._updateCheckedState();
+      }
+  }
+
+  get disabled() {
+      return this._disabled;
+  }
+
+  set disabled(value) {
+      if (this._disabled !== value) {
+          this._disabled = value;
+          this._updateDisabledState();
+      }
+  }
+}
 class BaseUWPPasswordBox extends HTMLElement {
   constructor() {
     super();
@@ -828,9 +994,12 @@ class UWPDialog extends BaseUWPDialog {}
 
 class UWPSelectableList extends BaseUWPSelectableList {}
 
+class UWPCheckbox extends BaseUWPCheckbox {}
+
 customElements.define("win-button", UWPButton);
 customElements.define("win-barbutton", UWPAPPBarButton);
 customElements.define("win-passwordbox", UWPPasswordBox);
 customElements.define("win-richrditbox", UWPRichEditBox);
 customElements.define("win-dialog", UWPDialog);
 customElements.define("win-list", UWPSelectableList);
+customElements.define("win-checkbox", UWPCheckbox);
