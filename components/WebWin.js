@@ -62,6 +62,69 @@ class BaseUWPButton extends HTMLElement {
   }
 }
 
+  class BaseUWPHighButton extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+      const template = document.createElement("template");
+      template.innerHTML = `
+          <style>
+            .uwpbutton {
+              cursor: default;
+              vertical-align:middle;
+              line-height:16.67px;
+              min-height:16.67px;
+              padding: 10px 20px;
+              background: var(--primary-color, #3393DD);
+              color:rgb(0, 0, 0);
+              border: none;
+              cursor: pointer;
+              font-size: 16px;
+              filter: blur(0px);
+              transition: filter 0.3s ease;
+              transform: scale(1);
+              transition: transform 0.3s ease;
+            }
+            .uwpbutton:active {
+              cursor: default;
+              transition: opacity 0.3s ease;
+              transform: scale(0.97);
+              filter: blur(0.5px);
+              outline: 0px solid  #85BEEB;
+              background: var(--primary-color, #66AEE5);
+            }
+            .uwpbutton:hover {
+              cursor: default;
+              outline: 2.75px solid   #3393DD;
+              outline-offset: -2.75px;
+            }
+            
+            .uwpbutton:disabled {
+              transition: opacity 0s ease;
+              transform: scale(1);
+              filter: blur(0);
+              outline: 0px solid  #7A7A7A;;
+              color:rgb(145, 145, 145);
+              background: #cccccc;
+              cursor: not-allowed;
+            }
+          </style>
+          <button class="uwpbutton"><slot></slot></button>
+        `;
+      this.shadowRoot.appendChild(template.content.cloneNode(true));
+    }
+  
+    static get observedAttributes() {
+      return ["disabled"];
+    }
+  
+    attributeChangedCallback(name, oldValue, newValue) {
+      if (name === "disabled") {
+        this.shadowRoot.querySelector(".uwpbutton").disabled = newValue !== null;
+      }
+    }
+  }
+
 class BaseUWPSelectableList extends HTMLElement {
   constructor() {
     super();
@@ -996,6 +1059,8 @@ class UWPSelectableList extends BaseUWPSelectableList {}
 
 class UWPCheckbox extends BaseUWPCheckbox {}
 
+class UWPHighButton extends BaseUWPHighButton {}
+
 customElements.define("win-button", UWPButton);
 customElements.define("win-barbutton", UWPAPPBarButton);
 customElements.define("win-passwordbox", UWPPasswordBox);
@@ -1003,3 +1068,4 @@ customElements.define("win-richrditbox", UWPRichEditBox);
 customElements.define("win-dialog", UWPDialog);
 customElements.define("win-list", UWPSelectableList);
 customElements.define("win-checkbox", UWPCheckbox);
+customElements.define("win-high-button", UWPHighButton);
