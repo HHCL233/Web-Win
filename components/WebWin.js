@@ -76,7 +76,7 @@ class BaseUWPButton extends HTMLElement {
               min-height:16.67px;
               padding: 10px 20px;
               background: var(--primary-color, #3393DD);
-              color:rgb(0, 0, 0);
+              color:rgb(255, 255, 255);
               border: none;
               cursor: pointer;
               font-size: 16px;
@@ -95,7 +95,7 @@ class BaseUWPButton extends HTMLElement {
             }
             .uwpbutton:hover {
               cursor: default;
-              outline: 2.75px solid   #3393DD;
+              outline: 2.75px solid   #85BEEB;
               outline-offset: -2.75px;
             }
             
@@ -339,6 +339,200 @@ class BaseUWPSelectableList extends HTMLElement {
     }
     this.appendChild(button);
     return button;
+  }
+  
+  // 批量设置按钮
+  setButtons(buttonTexts, selectedIndex = 0) { // 默认选中第一个
+    this.innerHTML = '';
+    buttonTexts.forEach((text, index) => {
+      this.addButton(text, index === selectedIndex);
+    });
+    // 确保至少有一个选项被选中
+    this._ensureSelection();
+  }
+  
+  // 获取当前选中的值
+  getSelectedValue() {
+    const selected = this.querySelector('uwp-button[selected]');
+    return selected ? selected.textContent : null;
+  }
+  
+  // 获取当前选中的索引
+  getSelectedIndex() {
+    const selected = this.querySelector('uwp-button[selected]');
+    return selected ? Array.from(this.children).indexOf(selected) : -1;
+  }
+}
+class BaseUWPOpenList extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    
+    // 定义内部按钮组件
+    class UWPButton extends HTMLElement {
+      static get observedAttributes() {
+        return ['disabled', 'selected'];
+      }
+      
+      constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+        this._selected = false;
+        this._updating = false;
+        
+        this.shadowRoot.innerHTML = `
+          <style>
+            :host {
+              display: block;
+              margin: 4px;
+            }
+            
+            .uwpbutton {
+              cursor: default;
+              display: block;
+              vertical-align: middle;
+              line-height: 28px;
+              min-height: 28px;
+              min-width: 100%;
+              text-align:left;
+              padding: 10px 20px;
+              background: var(--primary-color, #F2F2F2);
+              color: rgb(0, 0, 0);
+              border: none;
+              cursor: pointer;
+              font-size: 16px;
+              filter: blur(0px);
+              transition: filter 0.3s ease;
+              transform: scale(1);
+              transition: transform 0.3s ease;
+            }
+            
+            .uwpbutton.selected {
+              background: var(--accent-color, #91C1E5);
+            }
+            
+            .uwpbutton:active {
+              cursor: default;
+              background: var(--primary-color, #C2C2C2);
+              transition: opacity 0.3s ease;
+              transform: scale(0.97);
+              filter: blur(0.5px);
+            }
+            
+            .uwpbutton:hover:not(.selected) {
+              cursor: default;
+              background: var(--primary-color, #DADADA) !important ;
+            }
+            
+            .uwpbutton.selected:hover {
+              background: var(--accent-color, #61A8DF);
+            }
+            
+            .uwpbutton:disabled {
+              filter: blur(0);
+              color: rgb(145, 145, 145);
+              background: #cccccc;
+              cursor: not-allowed;
+            }
+          </style>
+          <button class="uwpbutton"><slot></slot></button>
+        `;
+        
+        this.button = this.shadowRoot.querySelector('.uwpbutton');
+      }
+      
+      connectedCallback() {
+        this.button.addEventListener('click', () => {
+          if (!this.disabled) {
+            this.dispatchEvent(new CustomEvent('uwp-select', {
+              bubbles: true,
+              composed: true,
+              detail: {
+                value: this.textContent,
+                selected: true // 总是设置为true，因为不能取消选中
+              }
+            }));
+          }
+        });
+      }
+      
+      set selected(value) {
+        if (this._updating) return; // 防止递归
+        this._updating = true;
+        
+        const newValue = Boolean(value);
+        if (this._selected !== newValue) {
+          this._selected = newValue;
+          this.button.classList.toggle('selected', newValue);
+          
+          // 只在值变化时更新属性
+          if (newValue) {
+            this.setAttribute('selected', '');
+          } else {
+            this.removeAttribute('selected');
+          }
+        }
+        
+        this._updating = false;
+      }
+      
+      get selected() {
+        return this._selected;
+      }
+      
+      attributeChangedCallback(name, oldValue, newValue) {
+        if (this._updating) return;
+        
+        if (name === 'selected') {
+          // 只更新内部状态，不触发setter的循环
+          this._selected = newValue !== null;
+          this.button.classList.toggle('selected', this._selected);
+        } else if (name === 'disabled') {
+          this.button.disabled = newValue !== null;
+        }
+      }
+      
+      
+      set disabled(value) {
+        if (value) {
+          this.setAttribute('disabled', '');
+        } else {
+          this.removeAttribute('disabled');
+        }
+      }
+      
+      get disabled() {
+        return this.hasAttribute('disabled');
+      }
+      
+    }
+    
+    // 注册内部按钮组件
+    if (!customElements.get('uwp-button')) {
+      customElements.define('uwp-button', UWPButton);
+    }
+    
+    // 列表容器的模板
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host {
+          display: block;
+        }
+        
+        ::slotted(uwp-button) {
+          display: block;
+          width: 100%;
+          margin: 0px 0;
+        }
+      </style>
+      <slot></slot>
+    `;
+  }
+  
+  // 添加新按钮
+  addButton(text, selected = false) {
+    const button = document.createElement('uwp-button');
+    button.textContent = text;
   }
   
   // 批量设置按钮
@@ -933,10 +1127,13 @@ class BaseUWPDialog extends HTMLElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === "show") {
-      if (newValue !== null) {
-        this.show();
-      } else {
-        this.hide();
+      // 只有当值实际发生变化时才执行操作
+      if (newValue !== oldValue) {
+        if (newValue !== null) {
+          this.show(); // 改为调用内部方法
+        } else {
+          this.hide(); // 改为调用内部方法
+        }
       }
     } else if (name === "title") {
       this.shadowRoot.getElementById("title").textContent = newValue;
@@ -946,7 +1143,35 @@ class BaseUWPDialog extends HTMLElement {
   connectedCallback() {
     this.updateButtons();
   }
+  get _show() {
+    if (this._showing) return;
+    this._showing = true;
+    
+    this.style.display = "flex";
+    this.style.pointerEvents = "auto";
+    const container = this.shadowRoot.querySelector(".dialog-container");
+    container.classList.remove("closing");
+    void this.offsetWidth; // 强制重绘
+  }
 
+  // 内部方法，不触发属性变化
+  get _hide() {
+    if (!this._showing) return;
+    this._showing = false;
+    
+    const container = this.shadowRoot.querySelector(".dialog-container");
+    container.classList.add("closing");
+
+    container.addEventListener(
+      "transitionend",
+      () => {
+        this.style.display = "none";
+        this.style.pointerEvents = "none";
+        container.classList.remove("closing");
+      },
+      { once: true }
+    );
+  }
   get show() {
     return this.hasAttribute("show");
   }
@@ -1061,6 +1286,8 @@ class UWPCheckbox extends BaseUWPCheckbox {}
 
 class UWPHighButton extends BaseUWPHighButton {}
 
+class UWPOpenList extends BaseUWPOpenList {}
+
 customElements.define("win-button", UWPButton);
 customElements.define("win-barbutton", UWPAPPBarButton);
 customElements.define("win-passwordbox", UWPPasswordBox);
@@ -1069,3 +1296,17 @@ customElements.define("win-dialog", UWPDialog);
 customElements.define("win-list", UWPSelectableList);
 customElements.define("win-checkbox", UWPCheckbox);
 customElements.define("win-high-button", UWPHighButton);
+customElements.define("win-open-list", UWPOpenList);
+
+// 在文件末尾添加
+export {
+  UWPButton,
+  UWPAPPBarButton,
+  UWPPasswordBox,
+  UWPRichEditBox,
+  UWPDialog,
+  UWPSelectableList,
+  UWPCheckbox,
+  UWPHighButton,
+  UWPOpenList
+};
