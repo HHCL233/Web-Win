@@ -1546,7 +1546,6 @@ class BaseUWPLargeTile extends HTMLElement {
             pointer-events: none;
             left: calc(var(--mouse-x) - 50px);
             top: calc(var(--mouse-y) - 50px);
-            transition: opacity 0.15s ease;
         }
         
         .tile:hover::before,
