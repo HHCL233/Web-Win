@@ -1286,7 +1286,7 @@ class BaseUWPTile extends HTMLElement {
             display: grid;
             grid-template-columns: repeat(6, 100px);
             grid-gap: 5px;
-            margin: 0 auto;
+            margin: 8px;
         }
         .tile {
             position: relative;
