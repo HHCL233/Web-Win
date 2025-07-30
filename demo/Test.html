@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>WebWin组件示例</title>
-    <script src="../components/WebWin.js"></script>
+    <script src="../components/WebWin.js" type="module" ></script>
     <style></style>
   </head>
   <body>
@@ -83,27 +83,9 @@
       }
     </script>
     <win-list id="myList">
-
+      <uwp-button style="">awa</uwp-button>
     </win-list>
-    
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const list = document.getElementById('myList');
-        
-        // 监听选择变化事件
-        list.addEventListener('win-list', (e) => {
-          console.log('选中项:', e.detail.selectedValue, 
-                    '索引:', e.detail.selectedIndex);
-        });
-        
-        // 动态添加按钮示例
-        setTimeout(() => {
-          
-          // 批量设置按钮示例，第二个参数是选中的索引
-          list.setButtons(['虽然这些控件', 'BUG很多', "但是", "不想修了","反正也能用","还有","一个弹窗但是没法展示"], 4);
-        }, 0);
-      });
-    </script>
     <win-checkbox >普通选项</win-checkbox>
+    <win-tile icon="https://cdn-icons-png.flaticon.com/512/3652/3652191.png">Tile Title</base-uwp-tile>
   </body>
 </html>

@@ -62,12 +62,12 @@ class BaseUWPButton extends HTMLElement {
   }
 }
 
-  class BaseUWPHighButton extends HTMLElement {
-    constructor() {
-      super();
-      this.attachShadow({ mode: "open" });
-      const template = document.createElement("template");
-      template.innerHTML = `
+class BaseUWPHighButton extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    const template = document.createElement("template");
+    template.innerHTML = `
           <style>
             .uwpbutton {
               cursor: default;
@@ -111,37 +111,37 @@ class BaseUWPButton extends HTMLElement {
           </style>
           <button class="uwpbutton"><slot></slot></button>
         `;
-      this.shadowRoot.appendChild(template.content.cloneNode(true));
-    }
-  
-    static get observedAttributes() {
-      return ["disabled"];
-    }
-  
-    attributeChangedCallback(name, oldValue, newValue) {
-      if (name === "disabled") {
-        this.shadowRoot.querySelector(".uwpbutton").disabled = newValue !== null;
-      }
+    this.shadowRoot.appendChild(template.content.cloneNode(true));
+  }
+
+  static get observedAttributes() {
+    return ["disabled"];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === "disabled") {
+      this.shadowRoot.querySelector(".uwpbutton").disabled = newValue !== null;
     }
   }
+}
 
 class BaseUWPSelectableList extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
-    
+    this.attachShadow({ mode: "open" });
+
     // 定义内部按钮组件
     class UWPButton extends HTMLElement {
       static get observedAttributes() {
-        return ['disabled', 'selected'];
+        return ["disabled", "selected"];
       }
-      
+
       constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
+        this.attachShadow({ mode: "open" });
         this._selected = false;
         this._updating = false;
-        
+
         this.shadowRoot.innerHTML = `
           <style>
             :host {
@@ -192,81 +192,81 @@ class BaseUWPSelectableList extends HTMLElement {
           </style>
           <button class="uwpbutton"><slot></slot></button>
         `;
-        
-        this.button = this.shadowRoot.querySelector('.uwpbutton');
+
+        this.button = this.shadowRoot.querySelector(".uwpbutton");
       }
-      
+
       connectedCallback() {
-        this.button.addEventListener('click', () => {
+        this.button.addEventListener("click", () => {
           if (!this.disabled) {
-            this.dispatchEvent(new CustomEvent('uwp-select', {
-              bubbles: true,
-              composed: true,
-              detail: {
-                value: this.textContent,
-                selected: true // 总是设置为true，因为不能取消选中
-              }
-            }));
+            this.dispatchEvent(
+              new CustomEvent("uwp-select", {
+                bubbles: true,
+                composed: true,
+                detail: {
+                  value: this.textContent,
+                  selected: true, // 总是设置为true，因为不能取消选中
+                },
+              })
+            );
           }
         });
       }
-      
+
       set selected(value) {
         if (this._updating) return; // 防止递归
         this._updating = true;
-        
+
         const newValue = Boolean(value);
         if (this._selected !== newValue) {
           this._selected = newValue;
-          this.button.classList.toggle('selected', newValue);
-          
+          this.button.classList.toggle("selected", newValue);
+
           // 只在值变化时更新属性
           if (newValue) {
-            this.setAttribute('selected', '');
+            this.setAttribute("selected", "");
           } else {
-            this.removeAttribute('selected');
+            this.removeAttribute("selected");
           }
         }
-        
+
         this._updating = false;
       }
-      
+
       get selected() {
         return this._selected;
       }
-      
+
       attributeChangedCallback(name, oldValue, newValue) {
         if (this._updating) return;
-        
-        if (name === 'selected') {
+
+        if (name === "selected") {
           // 只更新内部状态，不触发setter的循环
           this._selected = newValue !== null;
-          this.button.classList.toggle('selected', this._selected);
-        } else if (name === 'disabled') {
+          this.button.classList.toggle("selected", this._selected);
+        } else if (name === "disabled") {
           this.button.disabled = newValue !== null;
         }
       }
-      
-      
+
       set disabled(value) {
         if (value) {
-          this.setAttribute('disabled', '');
+          this.setAttribute("disabled", "");
         } else {
-          this.removeAttribute('disabled');
+          this.removeAttribute("disabled");
         }
       }
-      
+
       get disabled() {
-        return this.hasAttribute('disabled');
+        return this.hasAttribute("disabled");
       }
-      
     }
-    
+
     // 注册内部按钮组件
-    if (!customElements.get('uwp-button')) {
-      customElements.define('uwp-button', UWPButton);
+    if (!customElements.get("uwp-button")) {
+      customElements.define("uwp-button", UWPButton);
     }
-    
+
     // 列表容器的模板
     this.shadowRoot.innerHTML = `
       <style>
@@ -283,103 +283,109 @@ class BaseUWPSelectableList extends HTMLElement {
       <slot></slot>
     `;
   }
-  
+
   connectedCallback() {
-    this.addEventListener('uwp-select', this.handleSelect.bind(this));
+    this.addEventListener("uwp-select", this.handleSelect.bind(this));
     // 确保至少有一个选项被选中
     this._ensureSelection();
   }
-  
+
   // 确保至少有一个选项被选中
   _ensureSelection() {
-    if (!this.querySelector('uwp-button[selected]') && this.children.length > 0) {
+    if (
+      !this.querySelector("uwp-button[selected]") &&
+      this.children.length > 0
+    ) {
       this.children[0].selected = true;
     }
   }
-  
+
   // 处理选择事件
   handleSelect(e) {
     if (e.target.selected) return;
-    
+
     // 取消所有其他按钮的选中状态
-    this.querySelectorAll('uwp-button').forEach(button => {
+    this.querySelectorAll("uwp-button").forEach((button) => {
       if (button !== e.target) {
         button.selected = false;
       }
     });
-    
+
     // 直接设置内部状态避免递归
     e.target._selected = true;
-    e.target.button.classList.add('selected');
-    e.target.setAttribute('selected', '');
-    
+    e.target.button.classList.add("selected");
+    e.target.setAttribute("selected", "");
+
     // 触发选择变化事件
-    this.dispatchEvent(new CustomEvent('uwp-selection-changed', {
-      detail: {
-        selectedValue: e.detail.value,
-        selectedIndex: Array.from(this.children).indexOf(e.target),
-        selectedElement: e.target
-      }
-    }));
+    this.dispatchEvent(
+      new CustomEvent("uwp-selection-changed", {
+        detail: {
+          selectedValue: e.detail.value,
+          selectedIndex: Array.from(this.children).indexOf(e.target),
+          selectedElement: e.target,
+        },
+      })
+    );
   }
-  
+
   // 添加新按钮
   addButton(text, selected = false) {
-    const button = document.createElement('uwp-button');
+    const button = document.createElement("uwp-button");
     button.textContent = text;
     if (selected) {
       // 取消其他按钮的选中状态
-      this.querySelectorAll('uwp-button').forEach(btn => {
+      this.querySelectorAll("uwp-button").forEach((btn) => {
         btn.selected = false;
       });
       button.selected = true;
-    } else if (this.querySelectorAll('uwp-button[selected]').length === 0) {
+    } else if (this.querySelectorAll("uwp-button[selected]").length === 0) {
       // 如果没有选中的按钮，则选中新添加的按钮
       button.selected = true;
     }
     this.appendChild(button);
     return button;
   }
-  
+
   // 批量设置按钮
-  setButtons(buttonTexts, selectedIndex = 0) { // 默认选中第一个
-    this.innerHTML = '';
+  setButtons(buttonTexts, selectedIndex = 0) {
+    // 默认选中第一个
+    this.innerHTML = "";
     buttonTexts.forEach((text, index) => {
       this.addButton(text, index === selectedIndex);
     });
     // 确保至少有一个选项被选中
     this._ensureSelection();
   }
-  
+
   // 获取当前选中的值
   getSelectedValue() {
-    const selected = this.querySelector('uwp-button[selected]');
+    const selected = this.querySelector("uwp-button[selected]");
     return selected ? selected.textContent : null;
   }
-  
+
   // 获取当前选中的索引
   getSelectedIndex() {
-    const selected = this.querySelector('uwp-button[selected]');
+    const selected = this.querySelector("uwp-button[selected]");
     return selected ? Array.from(this.children).indexOf(selected) : -1;
   }
 }
 class BaseUWPOpenList extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
-    
+    this.attachShadow({ mode: "open" });
+
     // 定义内部按钮组件
     class UWPButton extends HTMLElement {
       static get observedAttributes() {
-        return ['disabled', 'selected'];
+        return ["disabled", "selected"];
       }
-      
+
       constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
+        this.attachShadow({ mode: "open" });
         this._selected = false;
         this._updating = false;
-        
+
         this.shadowRoot.innerHTML = `
           <style>
             :host {
@@ -437,81 +443,81 @@ class BaseUWPOpenList extends HTMLElement {
           </style>
           <button class="uwpbutton"><slot></slot></button>
         `;
-        
-        this.button = this.shadowRoot.querySelector('.uwpbutton');
+
+        this.button = this.shadowRoot.querySelector(".uwpbutton");
       }
-      
+
       connectedCallback() {
-        this.button.addEventListener('click', () => {
+        this.button.addEventListener("click", () => {
           if (!this.disabled) {
-            this.dispatchEvent(new CustomEvent('uwp-select', {
-              bubbles: true,
-              composed: true,
-              detail: {
-                value: this.textContent,
-                selected: true // 总是设置为true，因为不能取消选中
-              }
-            }));
+            this.dispatchEvent(
+              new CustomEvent("uwp-select", {
+                bubbles: true,
+                composed: true,
+                detail: {
+                  value: this.textContent,
+                  selected: true, // 总是设置为true，因为不能取消选中
+                },
+              })
+            );
           }
         });
       }
-      
+
       set selected(value) {
         if (this._updating) return; // 防止递归
         this._updating = true;
-        
+
         const newValue = Boolean(value);
         if (this._selected !== newValue) {
           this._selected = newValue;
-          this.button.classList.toggle('selected', newValue);
-          
+          this.button.classList.toggle("selected", newValue);
+
           // 只在值变化时更新属性
           if (newValue) {
-            this.setAttribute('selected', '');
+            this.setAttribute("selected", "");
           } else {
-            this.removeAttribute('selected');
+            this.removeAttribute("selected");
           }
         }
-        
+
         this._updating = false;
       }
-      
+
       get selected() {
         return this._selected;
       }
-      
+
       attributeChangedCallback(name, oldValue, newValue) {
         if (this._updating) return;
-        
-        if (name === 'selected') {
+
+        if (name === "selected") {
           // 只更新内部状态，不触发setter的循环
           this._selected = newValue !== null;
-          this.button.classList.toggle('selected', this._selected);
-        } else if (name === 'disabled') {
+          this.button.classList.toggle("selected", this._selected);
+        } else if (name === "disabled") {
           this.button.disabled = newValue !== null;
         }
       }
-      
-      
+
       set disabled(value) {
         if (value) {
-          this.setAttribute('disabled', '');
+          this.setAttribute("disabled", "");
         } else {
-          this.removeAttribute('disabled');
+          this.removeAttribute("disabled");
         }
       }
-      
+
       get disabled() {
-        return this.hasAttribute('disabled');
+        return this.hasAttribute("disabled");
       }
-      
     }
-    
+
     // 注册内部按钮组件
-    if (!customElements.get('uwp-button')) {
-      customElements.define('uwp-button', UWPButton);
+    if (!customElements.get("uwp-button")) {
+      customElements.define("uwp-button", UWPButton);
     }
-    
+
     // 列表容器的模板
     this.shadowRoot.innerHTML = `
       <style>
@@ -528,47 +534,48 @@ class BaseUWPOpenList extends HTMLElement {
       <slot></slot>
     `;
   }
-  
+
   // 添加新按钮
   addButton(text, selected = false) {
-    const button = document.createElement('uwp-button');
+    const button = document.createElement("uwp-button");
     button.textContent = text;
   }
-  
+
   // 批量设置按钮
-  setButtons(buttonTexts, selectedIndex = 0) { // 默认选中第一个
-    this.innerHTML = '';
+  setButtons(buttonTexts, selectedIndex = 0) {
+    // 默认选中第一个
+    this.innerHTML = "";
     buttonTexts.forEach((text, index) => {
       this.addButton(text, index === selectedIndex);
     });
     // 确保至少有一个选项被选中
     this._ensureSelection();
   }
-  
+
   // 获取当前选中的值
   getSelectedValue() {
-    const selected = this.querySelector('uwp-button[selected]');
+    const selected = this.querySelector("uwp-button[selected]");
     return selected ? selected.textContent : null;
   }
-  
+
   // 获取当前选中的索引
   getSelectedIndex() {
-    const selected = this.querySelector('uwp-button[selected]');
+    const selected = this.querySelector("uwp-button[selected]");
     return selected ? Array.from(this.children).indexOf(selected) : -1;
   }
 }
 class BaseUWPCheckbox extends HTMLElement {
   static get observedAttributes() {
-      return ['checked', 'disabled'];
+    return ["checked", "disabled"];
   }
 
   constructor() {
-      super();
-      this.attachShadow({ mode: 'open' });
-      this._checked = false;
-      this._disabled = false;
+    super();
+    this.attachShadow({ mode: "open" });
+    this._checked = false;
+    this._disabled = false;
 
-      this.shadowRoot.innerHTML = `
+    this.shadowRoot.innerHTML = `
           <style>
               :host {
                   display: inline-flex;
@@ -660,68 +667,68 @@ class BaseUWPCheckbox extends HTMLElement {
   }
 
   connectedCallback() {
-      this.addEventListener('click', this._toggleChecked);
-      this._updateCheckedState();
-      this._updateDisabledState();
+    this.addEventListener("click", this._toggleChecked);
+    this._updateCheckedState();
+    this._updateDisabledState();
   }
 
   disconnectedCallback() {
-      this.removeEventListener('click', this._toggleChecked);
+    this.removeEventListener("click", this._toggleChecked);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-      if (name === 'checked') {
-          this._checked = newValue !== null;
-          this._updateCheckedState();
-      } else if (name === 'disabled') {
-          this._disabled = newValue !== null;
-          this._updateDisabledState();
-      }
+    if (name === "checked") {
+      this._checked = newValue !== null;
+      this._updateCheckedState();
+    } else if (name === "disabled") {
+      this._disabled = newValue !== null;
+      this._updateDisabledState();
+    }
   }
 
   _toggleChecked() {
-      if (!this._disabled) {
-          this.checked = !this._checked;
-          this.dispatchEvent(new Event('change', { bubbles: true }));
-      }
+    if (!this._disabled) {
+      this.checked = !this._checked;
+      this.dispatchEvent(new Event("change", { bubbles: true }));
+    }
   }
 
   _updateCheckedState() {
-      if (this._checked) {
-          this.setAttribute('checked', '');
-      } else {
-          this.removeAttribute('checked');
-      }
+    if (this._checked) {
+      this.setAttribute("checked", "");
+    } else {
+      this.removeAttribute("checked");
+    }
   }
 
   _updateDisabledState() {
-      if (this._disabled) {
-          this.setAttribute('disabled', '');
-      } else {
-          this.removeAttribute('disabled');
-      }
+    if (this._disabled) {
+      this.setAttribute("disabled", "");
+    } else {
+      this.removeAttribute("disabled");
+    }
   }
 
   get checked() {
-      return this._checked;
+    return this._checked;
   }
 
   set checked(value) {
-      if (this._checked !== value) {
-          this._checked = value;
-          this._updateCheckedState();
-      }
+    if (this._checked !== value) {
+      this._checked = value;
+      this._updateCheckedState();
+    }
   }
 
   get disabled() {
-      return this._disabled;
+    return this._disabled;
   }
 
   set disabled(value) {
-      if (this._disabled !== value) {
-          this._disabled = value;
-          this._updateDisabledState();
-      }
+    if (this._disabled !== value) {
+      this._disabled = value;
+      this._updateDisabledState();
+    }
   }
 }
 class BaseUWPPasswordBox extends HTMLElement {
@@ -1146,7 +1153,7 @@ class BaseUWPDialog extends HTMLElement {
   get _show() {
     if (this._showing) return;
     this._showing = true;
-    
+
     this.style.display = "flex";
     this.style.pointerEvents = "auto";
     const container = this.shadowRoot.querySelector(".dialog-container");
@@ -1158,7 +1165,7 @@ class BaseUWPDialog extends HTMLElement {
   get _hide() {
     if (!this._showing) return;
     this._showing = false;
-    
+
     const container = this.shadowRoot.querySelector(".dialog-container");
     container.classList.add("closing");
 
@@ -1268,7 +1275,216 @@ class BaseUWPDialog extends HTMLElement {
     this.removeAttribute("show");
   }
 }
+class BaseUWPTile extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    const template = document.createElement("template");
+    template.innerHTML = `
+        <style>
+        .start-menu {
+            display: grid;
+            grid-template-columns: repeat(6, 100px);
+            grid-gap: 5px;
+            margin: 0 auto;
+        }
+        .tile {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .tile-content {
+            position: relative;
+            height: 100%;
+            width: 100%;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 2.5px;
+            padding-left: 10px;
+            box-sizing: border-box;
+            font-weight: lighter;
+        }
+        
+        .tile-icon-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tile-icon {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+        
+        .tile-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-align: left;
+            margin-top: auto; 
+            padding-bottom: 5px;
+        }
+        
+        .tile::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 4px solid transparent;
+            pointer-events: none;
+            border-image: radial-gradient(
+                circle at var(--mouse-x) var(--mouse-y),
+                rgba(255, 255, 255, var(--edge-brightness)) 0%,
+                rgba(255, 255, 255, 0) 70%
+            ) 1;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+        }
+        
+        .tile::after {
+            content: '';
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(
+                circle at center,
+                rgba(255, 255, 255, 0.3) 0%,
+                rgba(255, 255, 255, 0) 60%
+            );
+            opacity: 0;
+            pointer-events: none;
+            left: calc(var(--mouse-x) - 50px);
+            top: calc(var(--mouse-y) - 50px);
+            transition: opacity 0.15s ease;
+        }
+        
+        .tile:hover::before,
+        .tile:hover::after {
+            opacity: 1;
+        }
+        
+        
+        .medium {
+            grid-row: span 1;
+            grid-column: span 1;
+            aspect-ratio: 1/1;
+        }
+        
+        .large {
+            grid-row: span 2;
+            grid-column: span 2;
+            aspect-ratio: 2/2;
+        }
+        
+        .blue { background-color: #0078D7; }
+        .dark-blue { background-color: #004e8c; }
+        
+        .large .tile-icon {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .large .tile-title {
+            font-size: 16px;
+        }
+    </style>
+    <div class="start-menu">
+        <div class="tile medium blue">
+            <div class="tile-content">
+                <div class="tile-icon-container">
+                    <img src="" class="tile-icon" alt="Tile icon">
+                </div>
+                <div class="tile-title"><slot></slot></div>
+            </div>
+        </div></div>
+        <script>
+        document.querySelectorAll('.tile').forEach(tile => {
+            tile.style.setProperty('--mouse-x', '50px');
+            tile.style.setProperty('--mouse-y', '50px');
+            tile.style.setProperty('--edge-brightness', '0.2');
+        });
+    </script>
+      `;
+    this.shadowRoot.appendChild(template.content.cloneNode(true));
 
+    // Store reference to the icon element
+    this._iconElement = this.shadowRoot.querySelector(".tile-icon");
+    this.tileElement = this.shadowRoot.querySelector(".tile");
+    this.tileElement.addEventListener("mousemove", this.updateGloss.bind(this));
+    this.tileElement.addEventListener("mouseenter", this.initTile.bind(this));
+  }
+  initTile(event) {
+    const tile = event.currentTarget;
+    const rect = tile.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    tile.style.setProperty("--mouse-x", x + "px");
+    tile.style.setProperty("--mouse-y", y + "px");
+    tile.style.setProperty("--edge-brightness", "0.2");
+  }
+
+  updateGloss(event) {
+    const tile = event.currentTarget;
+    const rect = tile.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    tile.style.setProperty("--mouse-x", x + "px");
+    tile.style.setProperty("--mouse-y", y + "px");
+
+
+    const width = rect.width;
+    const height = rect.height;
+
+
+    const distLeft = x;
+    const distRight = width - x;
+    const distTop = y;
+    const distBottom = height - y;
+
+    const minDist = Math.min(distLeft, distRight, distTop, distBottom);
+
+
+    const edgeBrightness = Math.min(
+      0.5,
+      0.3 + 0.2 * (1 - (minDist / Math.min(width, height)) * 2)
+    );
+
+    tile.style.setProperty("--edge-brightness", edgeBrightness.toString());
+  }
+
+  static get observedAttributes() {
+    return ["icon"];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === "icon") {
+      this._updateIcon(newValue);
+    }
+  }
+
+  get icon() {
+    return this.getAttribute("icon");
+  }
+
+  set icon(value) {
+    this.setAttribute("icon", value);
+  }
+
+  _updateIcon(iconUrl) {
+    if (this._iconElement && iconUrl) {
+      this._iconElement.src = iconUrl;
+    }
+  }
+}
+
+class UWPTile extends BaseUWPTile {}
 
 class UWPButton extends BaseUWPButton {}
 
@@ -1297,8 +1513,8 @@ customElements.define("win-list", UWPSelectableList);
 customElements.define("win-checkbox", UWPCheckbox);
 customElements.define("win-high-button", UWPHighButton);
 customElements.define("win-open-list", UWPOpenList);
+customElements.define("win-tile", UWPTile);
 
-// 在文件末尾添加
 export {
   UWPButton,
   UWPAPPBarButton,
@@ -1308,5 +1524,6 @@ export {
   UWPSelectableList,
   UWPCheckbox,
   UWPHighButton,
-  UWPOpenList
+  UWPOpenList,
+  UWPTile,
 };
