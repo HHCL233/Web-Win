@@ -1291,7 +1291,6 @@ class BaseUWPTile extends HTMLElement {
         .tile {
             position: relative;
             overflow: hidden;
-            cursor: pointer;
         }
         
         .tile-content {
