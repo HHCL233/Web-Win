@@ -15,7 +15,7 @@ class BaseUWPButton extends HTMLElement {
             background: var(--primary-color, #CCCCCC);
             color:rgb(0, 0, 0);
             border: none;
-            cursor: pointer;
+            cursor: default;
             font-size: 16px;
             filter: blur(0px);
             transition: filter 0.3s ease;
@@ -78,7 +78,7 @@ class BaseUWPHighButton extends HTMLElement {
               background: var(--primary-color, #3393DD);
               color:rgb(255, 255, 255);
               border: none;
-              cursor: pointer;
+              cursor: default;
               font-size: 16px;
               filter: blur(0px);
               transition: filter 0.3s ease;
@@ -161,7 +161,7 @@ class BaseUWPSelectableList extends HTMLElement {
               background: var(--primary-color, #F2F2F2);
               color: rgb(0, 0, 0);
               border: none;
-              cursor: pointer;
+              cursor: default;
               font-size: 16px;
             }
             
@@ -405,7 +405,7 @@ class BaseUWPOpenList extends HTMLElement {
               background: var(--primary-color, #F2F2F2);
               color: rgb(0, 0, 0);
               border: none;
-              cursor: pointer;
+              cursor: default;
               font-size: 16px;
               filter: blur(0px);
               transition: filter 0.3s ease;
@@ -580,7 +580,7 @@ class BaseUWPCheckbox extends HTMLElement {
               :host {
                   display: inline-flex;
                   align-items: center;
-                  cursor: pointer;
+                  cursor: default;
                   user-select: none;
                   --size: 20px;
                   --border-width: 3px;
@@ -881,6 +881,7 @@ class BaseUWPRichEditBox extends HTMLElement {
             color:rgb(0, 0, 0);
             border: none;
             font-size: 16px;
+            vertical-align: top;
           }
           .uwprichrditbox:focus {
             outline: 2.75px solid  #0078D4;
@@ -1049,7 +1050,7 @@ class BaseUWPDialog extends HTMLElement {
           background: var(--primary-color, #CCCCCC);
           color: rgb(0, 0, 0);
           border: none;
-          cursor: pointer;
+          cursor: default;
           font-size: 16px;
           filter: blur(0px);
           transition: filter 0.3s ease;
@@ -1282,15 +1283,13 @@ class BaseUWPTile extends HTMLElement {
     const template = document.createElement("template");
     template.innerHTML = `
         <style>
-        .start-menu {
-            display: grid;
-            grid-template-columns: repeat(6, 100px);
-            grid-gap: 5px;
-            margin: 8px;
-        }
         .tile {
             position: relative;
             overflow: hidden;
+            width: 100px;
+            height: 100px;
+            margin: 1px;
+            display: inline-block;
         }
         
         .tile-content {
@@ -1301,7 +1300,6 @@ class BaseUWPTile extends HTMLElement {
             display: flex;
             flex-direction: column;
             padding: 2.5px;
-            padding-left: 10px;
             box-sizing: border-box;
             font-weight: lighter;
         }
@@ -1325,6 +1323,7 @@ class BaseUWPTile extends HTMLElement {
             text-align: left;
             margin-top: auto; 
             padding-bottom: 5px;
+            margin-left: 8px;
         }
         
         .tile::before {
@@ -1339,10 +1338,9 @@ class BaseUWPTile extends HTMLElement {
             border-image: radial-gradient(
                 circle at var(--mouse-x) var(--mouse-y),
                 rgba(255, 255, 255, var(--edge-brightness)) 0%,
-                rgba(255, 255, 255, 0) 70%
+                rgba(255, 255, 255, 0.39) 70%
             ) 1;
             opacity: 0;
-            transition: opacity 0.15s ease;
         }
         
         .tile::after {
@@ -1392,7 +1390,6 @@ class BaseUWPTile extends HTMLElement {
             font-size: 16px;
         }
     </style>
-    <div class="start-menu">
         <div class="tile medium blue">
             <div class="tile-content">
                 <div class="tile-icon-container">
@@ -1400,7 +1397,7 @@ class BaseUWPTile extends HTMLElement {
                 </div>
                 <div class="tile-title"><slot></slot></div>
             </div>
-        </div></div>
+        </div>
         <script>
         document.querySelectorAll('.tile').forEach(tile => {
             tile.style.setProperty('--mouse-x', '50px');
