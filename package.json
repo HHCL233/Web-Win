@@ -1,6 +1,6 @@
 {
   "name": "webwin",
-  "version": "1.0.10",
+  "version": "1.1.0",
   "description": "![logo](Web-Win.png)  \r [![star](https://gitee.com/hhcl233/web-win/badge/star.svg?theme=gray)](https://gitee.com/hhcl233/web-win/stargazers)  \r #### 介绍\r 使用UWP组件样式的开源组件库",
   "main": "index.js",
   "scripts": {
