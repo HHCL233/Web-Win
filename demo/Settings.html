@@ -1,32 +1,32 @@
 <!DOCTYPE html>
-<html style="height: 100%">
+<html style="height: 100%;background-color: white;">
   <head>
     <meta charset="utf-8" />
     <title>WebWin组件示例</title>
-    <script src="../components/WebWin.js"></script>
+    <script src="../components/WebWin.js" type="module"></script>
   </head>
   <body marginheight="0px" marginwidth="0px" style="height: 100%">
     <div
       style="
         width: 300px;
         height: 100%;
-        background-color: #f2f2f2;
+        background-color: #ffffff;
         display: inline-block;
       "
     >
-      <win-list id="myList">
-        <uwp-button onclick="loadUrlInIframe('item','SettingsList/Home.html')" selected
-          >主页</uwp-button
+      <win-list-plus id="myList">
+        <win-list-item onclick="loadUrlInIframe('item','SettingsList/Home.html')" selected
+          >主页</win-list-item
         >
-        <uwp-button onclick="loadUrlInIframe('item','SettingsList/Error.html')">没用</uwp-button>
-        <uwp-button onclick="loadUrlInIframe('item','SettingsList/Error.html')">没用</uwp-button>
-        <uwp-button onclick="loadUrlInIframe('item','SettingsList/Error.html')">没用</uwp-button>
-        <uwp-button onclick="loadUrlInIframe('item','SettingsList/Tips.html')">Tips</uwp-button>
-        <uwp-button
+        <win-list-item onclick="loadUrlInIframe('item','SettingsList/Error.html')">测试</win-list-item>
+        <win-list-item onclick="loadUrlInIframe('item','SettingsList/Error.html')">测试</win-list-item>
+        <win-list-item onclick="loadUrlInIframe('item','SettingsList/Error.html')">测试</win-list-item>
+        <win-list-item onclick="loadUrlInIframe('item','SettingsList/Tips.html')">Tips</win-list-item>
+        <win-list-item
           onclick="loadUrlInIframe('item','SettingsList/About.html')"
-          >关于</uwp-button
+          >关于</win-list-item
         >
-      </win-list>
+      </win-list-plus>
     </div>
     <div
       style="
