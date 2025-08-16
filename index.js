@@ -1,7 +1,16 @@
-export { UWPButton } from "./components/WebWin.js";
-export { UWPAPPBarButton } from "./components/WebWin.js";
-export { UWPPasswordBox } from "./components/WebWin.js";
-export { UWPRichEditBox } from "./components/WebWin.js";
+export { 
+  UWPButton,
+  UWPAPPBarButton,
+  UWPPasswordBox,
+  UWPRichEditBox,
+  UWPDialog,
+  UWPSelectableList,
+  UWPCheckbox,
+  UWPHighButton,
+  UWPOpenList,
+  UWPTile,
+  UWPLargeTile
+} from "./components/WebWin.js";
 
 function isUndef(v) {
   return v === undefined || v === null;
