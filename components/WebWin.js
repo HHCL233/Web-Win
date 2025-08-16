@@ -262,19 +262,17 @@ class BaseUWPSelectableList extends HTMLElement {
       }
     }
 
-    // 注册内部按钮组件
-    if (!customElements.get("uwp-button")) {
-      customElements.define("uwp-button", UWPButton);
+    if (!customElements.get("win-list-item")) {
+      customElements.define("win-list-item", UWPButton);
     }
 
-    // 列表容器的模板
     this.shadowRoot.innerHTML = `
       <style>
         :host {
           display: block;
         }
         
-        ::slotted(uwp-button) {
+        ::slotted(win-list-item) {
           display: block;
           width: 100%;
           margin: 0px 0;
@@ -286,14 +284,12 @@ class BaseUWPSelectableList extends HTMLElement {
 
   connectedCallback() {
     this.addEventListener("uwp-select", this.handleSelect.bind(this));
-    // 确保至少有一个选项被选中
     this._ensureSelection();
   }
 
-  // 确保至少有一个选项被选中
   _ensureSelection() {
     if (
-      !this.querySelector("uwp-button[selected]") &&
+      !this.querySelector("win-list-item[selected]") &&
       this.children.length > 0
     ) {
       this.children[0].selected = true;
@@ -304,19 +300,16 @@ class BaseUWPSelectableList extends HTMLElement {
   handleSelect(e) {
     if (e.target.selected) return;
 
-    // 取消所有其他按钮的选中状态
-    this.querySelectorAll("uwp-button").forEach((button) => {
+    this.querySelectorAll("win-list-item").forEach((button) => {
       if (button !== e.target) {
         button.selected = false;
       }
     });
 
-    // 直接设置内部状态避免递归
     e.target._selected = true;
     e.target.button.classList.add("selected");
     e.target.setAttribute("selected", "");
 
-    // 触发选择变化事件
     this.dispatchEvent(
       new CustomEvent("uwp-selection-changed", {
         detail: {
@@ -328,25 +321,21 @@ class BaseUWPSelectableList extends HTMLElement {
     );
   }
 
-  // 添加新按钮
   addButton(text, selected = false) {
-    const button = document.createElement("uwp-button");
+    const button = document.createElement("win-list-item");
     button.textContent = text;
     if (selected) {
-      // 取消其他按钮的选中状态
-      this.querySelectorAll("uwp-button").forEach((btn) => {
+      this.querySelectorAll("win-list-item").forEach((btn) => {
         btn.selected = false;
       });
       button.selected = true;
-    } else if (this.querySelectorAll("uwp-button[selected]").length === 0) {
-      // 如果没有选中的按钮，则选中新添加的按钮
+    } else if (this.querySelectorAll("win-list-item[selected]").length === 0) {
       button.selected = true;
     }
     this.appendChild(button);
     return button;
   }
 
-  // 批量设置按钮
   setButtons(buttonTexts, selectedIndex = 0) {
     // 默认选中第一个
     this.innerHTML = "";
@@ -359,13 +348,13 @@ class BaseUWPSelectableList extends HTMLElement {
 
   // 获取当前选中的值
   getSelectedValue() {
-    const selected = this.querySelector("uwp-button[selected]");
+    const selected = this.querySelector("win-list-item[selected]");
     return selected ? selected.textContent : null;
   }
 
   // 获取当前选中的索引
   getSelectedIndex() {
-    const selected = this.querySelector("uwp-button[selected]");
+    const selected = this.querySelector("win-list-item[selected]");
     return selected ? Array.from(this.children).indexOf(selected) : -1;
   }
 }
@@ -514,8 +503,8 @@ class BaseUWPOpenList extends HTMLElement {
     }
 
     // 注册内部按钮组件
-    if (!customElements.get("uwp-button")) {
-      customElements.define("uwp-button", UWPButton);
+    if (!customElements.get("win-list-item")) {
+      customElements.define("win-list-item", UWPButton);
     }
 
     // 列表容器的模板
@@ -525,7 +514,7 @@ class BaseUWPOpenList extends HTMLElement {
           display: block;
         }
         
-        ::slotted(uwp-button) {
+        ::slotted(win-list-item) {
           display: block;
           width: 100%;
           margin: 0px 0;
@@ -537,7 +526,7 @@ class BaseUWPOpenList extends HTMLElement {
 
   // 添加新按钮
   addButton(text, selected = false) {
-    const button = document.createElement("uwp-button");
+    const button = document.createElement("win-list-item");
     button.textContent = text;
   }
 
@@ -554,13 +543,13 @@ class BaseUWPOpenList extends HTMLElement {
 
   // 获取当前选中的值
   getSelectedValue() {
-    const selected = this.querySelector("uwp-button[selected]");
+    const selected = this.querySelector("win-list-item[selected]");
     return selected ? selected.textContent : null;
   }
 
   // 获取当前选中的索引
   getSelectedIndex() {
-    const selected = this.querySelector("uwp-button[selected]");
+    const selected = this.querySelector("win-list-item[selected]");
     return selected ? Array.from(this.children).indexOf(selected) : -1;
   }
 }
@@ -1289,7 +1278,6 @@ class BaseUWPTile extends HTMLElement {
             height: 100px;
             margin: 2px;
             display: inline-block;
-            vertical-align: top;
         }
         
         .tile-content {
@@ -1855,7 +1843,6 @@ class BaseUWPLargeTile extends HTMLElement {
             height: 204px;
             margin: 1px;
             display: inline-block;
-            vertical-align: top;
         }
         
         .tile-content {
@@ -2223,8 +2210,8 @@ class BaseUWPSelectableListPlus extends HTMLElement {
       }
     }
 
-    if (!customElements.get("uwp-button")) {
-      customElements.define("uwp-button", UWPButton);
+    if (!customElements.get("win-list-item")) {
+      customElements.define("win-list-item", UWPButton);
     }
 
     this.shadowRoot.innerHTML = `
@@ -2235,7 +2222,7 @@ class BaseUWPSelectableListPlus extends HTMLElement {
           padding-left: 4px; 
         }
         
-        ::slotted(uwp-button) {
+        ::slotted(win-list-item) {
           display: block;
           width: 100%;
           margin: 0px 0;
@@ -2271,7 +2258,7 @@ class BaseUWPSelectableListPlus extends HTMLElement {
 
   _ensureSelection() {
     if (
-      !this.querySelector("uwp-button[selected]") &&
+      !this.querySelector("win-list-item[selected]") &&
       this.children.length > 0
     ) {
       this.children[0].selected = true;
@@ -2281,7 +2268,7 @@ class BaseUWPSelectableListPlus extends HTMLElement {
 
   // 更新选择指示器位置 - 使其垂直居中
   updateSelectPosition() {
-    const selectedButton = this.querySelector("uwp-button[selected]");
+    const selectedButton = this.querySelector("win-list-item[selected]");
     if (selectedButton && this.selectIndicator) {
       const rect = selectedButton.getBoundingClientRect();
       const listRect = this.getBoundingClientRect();
@@ -2296,7 +2283,7 @@ class BaseUWPSelectableListPlus extends HTMLElement {
   handleSelect(e) {
     if (e.target.selected) return;
 
-    this.querySelectorAll("uwp-button").forEach((button) => {
+    this.querySelectorAll("win-list-item").forEach((button) => {
       if (button !== e.target) {
         button.selected = false;
       }
@@ -2319,7 +2306,7 @@ class BaseUWPSelectableListPlus extends HTMLElement {
   }
 
   addButton(text, selected = false, icon = "") {
-    const button = document.createElement("uwp-button");
+    const button = document.createElement("win-list-item");
     button.textContent = text;
     
     if (icon) {
@@ -2327,11 +2314,11 @@ class BaseUWPSelectableListPlus extends HTMLElement {
     }
     
     if (selected) {
-      this.querySelectorAll("uwp-button").forEach((btn) => {
+      this.querySelectorAll("win-list-item").forEach((btn) => {
         btn.selected = false;
       });
       button.selected = true;
-    } else if (this.querySelectorAll("uwp-button[selected]").length === 0) {
+    } else if (this.querySelectorAll("win-list-item[selected]").length === 0) {
       button.selected = true;
     }
     
@@ -2358,12 +2345,12 @@ class BaseUWPSelectableListPlus extends HTMLElement {
   }
 
   getSelectedValue() {
-    const selected = this.querySelector("uwp-button[selected]");
+    const selected = this.querySelector("win-list-item[selected]");
     return selected ? selected.textContent : null;
   }
 
   getSelectedIndex() {
-    const selected = this.querySelector("uwp-button[selected]");
+    const selected = this.querySelector("win-list-item[selected]");
     return selected ? Array.from(this.children).indexOf(selected) : -1;
   }
 }
