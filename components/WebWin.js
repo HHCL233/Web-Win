@@ -2395,7 +2395,7 @@ customElements.define("win-tile", UWPTile);
 customElements.define("win-large-tile", UWPLargeTile);
 customElements.define("win-white-tile", UWPWhiteTile);
 customElements.define("win-green-tile", UWPGreenTile);
-customElements.define("win-list-plus", UWPGreenTile);
+customElements.define("win-list-plus", BaseUWPSelectableListPlus);
 
 export {
   UWPButton,
