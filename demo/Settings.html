@@ -8,22 +8,21 @@
   <body marginheight="0px" marginwidth="0px" style="height: 100%">
     <div
       style="
-        width: 300px;
+        width: 330px;
         height: 100%;
         background-color: #ffffff;
         display: inline-block;
       "
     >
-      <win-list-plus id="myList">
-        <win-list-item onclick="loadUrlInIframe('item','SettingsList/Home.html')" selected
+      <win-inputbox>这里不能查找设置</win-inputbox>
+      <win-list-plus id="myList" style="margin-top: 25px;">
+        <h5 style="margin: 0;color: #888888;">设置</h5>
+        <win-list-item style="margin-top: 8px;" onclick="loadUrlInIframe('item','SettingsList/Home.html')" selected icon='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>'
           >主页</win-list-item
         >
-        <win-list-item onclick="loadUrlInIframe('item','SettingsList/Error.html')">测试</win-list-item>
-        <win-list-item onclick="loadUrlInIframe('item','SettingsList/Error.html')">测试</win-list-item>
-        <win-list-item onclick="loadUrlInIframe('item','SettingsList/Error.html')">测试</win-list-item>
         <win-list-item onclick="loadUrlInIframe('item','SettingsList/Tips.html')">Tips</win-list-item>
         <win-list-item
-          onclick="loadUrlInIframe('item','SettingsList/About.html')"
+          onclick="loadUrlInIframe('item','SettingsList/About.html')" icon='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>'
           >关于</win-list-item
         >
       </win-list-plus>
@@ -31,7 +30,7 @@
     <div
       style="
         height: 99%;
-        width: calc(100% - 310px);
+        width: calc(100% - 360px);
         vertical-align: top;
         display: inline-block;
       "

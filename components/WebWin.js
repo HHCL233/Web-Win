@@ -809,36 +809,30 @@ class BaseUWPAppBarButton extends HTMLElement {
     this._input = this.shadowRoot.querySelector(".uwpappbutton");
   }
   connectedCallback() {
-    // 获取组件标签内的文本内容
     const textContent = this.textContent.trim();
     console.log(textContent);
 
-    // 优先使用属性值，如果没有属性值则使用标签内容
     const value = this.getAttribute("value") || textContent;
 
-    // 设置input的value属性
     if (value) {
       this._input.value = value;
     }
 
-    // 清空组件标签内的文本内容（可选）
     this.textContent = "";
   }
 
   static get observedAttributes() {
-    return ["disabled", "value"]; // 添加value属性监听
+    return ["disabled", "value"]; 
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === "disabled") {
       this._input.disabled = newValue !== null;
     } else if (name === "value") {
-      // 当value属性变化时更新输入框
       this._input.value = newValue || "";
     }
   }
 
-  // 添加getter和setter以便通过JavaScript属性访问
   get value() {
     return this._input.value;
   }
